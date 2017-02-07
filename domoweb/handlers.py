@@ -6,7 +6,7 @@ from tornado.gen import Return
 from tornado.escape import json_decode
 from tornado.httpclient import AsyncHTTPClient, HTTPClient, HTTPError, HTTPRequest
 
-from domoweb.models import to_json, Section, Widget, DataType, WidgetInstance, WidgetInstanceOption, WidgetInstanceSensor, WidgetInstanceCommand, WidgetInstanceDevice, SectionParam, Sensor, Theme
+from domoweb.models import to_json, Section, Widget, DataType, WidgetInstance, WidgetInstanceOption, WidgetInstanceSensor, WidgetInstanceCommand, WidgetInstanceDevice, SectionParam, Sensor, Theme, Parameter
 from domoweb.forms import WidgetInstanceForms, WidgetStyleForm
 from domoweb.loaders import mqDataLoader
 
@@ -122,14 +122,14 @@ class ConfigurationHandler(BaseHandler):
             themeWidgetsStyle = Theme.getParamsDict(section.theme.id, ["widget"])
             options = SectionParam.getSection(section_id=id)
             dataOptions = dict([(r.key, r.value) for r in options])
-            pprint.pprint(dataOptions)
+            loginMessage = Parameter.get("loginMessage") 
             widgetForm = WidgetStyleForm(data=dataOptions, prefix='params')
             backgrounds = [{'type':'uploaded', 'href': 'backgrounds/thumbnails/%s'%f, 'value': 'backgrounds/%s'%f} for f in os.listdir('/var/lib/domoweb/backgrounds') if any(f.lower().endswith(x) for x in ('.jpeg', '.jpg','.gif','.png'))]
             themeSectionStyle = Theme.getParamsDict(section.theme.id, ["section"])
             if 'SectionBackgroundImage' in themeSectionStyle:
                 href = "%s/thumbnails/%s" % (os.path.dirname(themeSectionStyle['SectionBackgroundImage']), os.path.basename(themeSectionStyle['SectionBackgroundImage']))
                 backgrounds.insert(0, {'type': 'theme', 'href': href, 'value': themeSectionStyle['SectionBackgroundImage']})
-            self.render('sectionConfiguration.html', section=section, params=params, backgrounds=backgrounds, widgetForm=widgetForm, themeWidgetsStyle=themeWidgetsStyle, custom="custom")
+            self.render('sectionConfiguration.html', section=section, params=params, backgrounds=backgrounds, widgetForm=widgetForm, themeWidgetsStyle=themeWidgetsStyle, custom=loginMessage)
         elif action=='addsection':
             self.render('sectionAdd.html')
 

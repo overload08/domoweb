@@ -24,6 +24,11 @@ class Parameter(Base):
     key = Column(String(30), primary_key=True)
     value = Column(Unicode(255))
 
+    @classmethod
+    def get(cls, key):
+        s = session.query(cls).get(key)
+        return s
+
 class Widget(Base):
     __tablename__ = 'widget'
     id = Column(String(50), primary_key=True)
