@@ -21,7 +21,7 @@ from domogikmq.reqrep.client import MQSyncReq
 from domogikmq.message import MQMessage
 from domogikmq.pubsub.publisher import MQPub
 
-
+import pprint
 import traceback
 import time
 
@@ -54,9 +54,10 @@ class MainHandler(BaseHandler):
 class LoginHandler(BaseHandler):
     def get(self):
         msg = None
-        if options.rest_url.startswith("http://"):
-            msg = "You are not using a secured Domogik server. Please consider activating SSL on Domogik and configure Domoweb to use the new url!"
-        self.render("login.html", error = None, info = msg)
+        custom = "<b>Demo</b><br>You can use demo as login and blank as password to test Domogik!<br/>If you are interested, go to our <a href='http://www.domogik.org/fr/'>website!</a>"
+        #if options.rest_url.startswith("http://"):
+            #msg = "You are not using a secured Domogik server. Please consider activating SSL on Domogik and configure Domoweb to use the new url!"
+        self.render("login.html", error = None, info = msg, custom = custom)
 
     def post(self):
         status, msg = self.check_permission(self.get_argument("name", None), self.get_argument("password", None))
@@ -64,7 +65,7 @@ class LoginHandler(BaseHandler):
             self.set_secure_cookie("user", self.get_argument("name"))
             self.redirect("/")
         else:
-            self.render("login.html", error = msg, info = None)
+            self.render("login.html", error = msg, info = None, custom = None)
 
     def check_permission(self, username, password):
         logger.info("Authentication : checking persmission. User='{0}'".format(username))
@@ -121,13 +122,14 @@ class ConfigurationHandler(BaseHandler):
             themeWidgetsStyle = Theme.getParamsDict(section.theme.id, ["widget"])
             options = SectionParam.getSection(section_id=id)
             dataOptions = dict([(r.key, r.value) for r in options])
+            pprint.pprint(dataOptions)
             widgetForm = WidgetStyleForm(data=dataOptions, prefix='params')
             backgrounds = [{'type':'uploaded', 'href': 'backgrounds/thumbnails/%s'%f, 'value': 'backgrounds/%s'%f} for f in os.listdir('/var/lib/domoweb/backgrounds') if any(f.lower().endswith(x) for x in ('.jpeg', '.jpg','.gif','.png'))]
             themeSectionStyle = Theme.getParamsDict(section.theme.id, ["section"])
             if 'SectionBackgroundImage' in themeSectionStyle:
                 href = "%s/thumbnails/%s" % (os.path.dirname(themeSectionStyle['SectionBackgroundImage']), os.path.basename(themeSectionStyle['SectionBackgroundImage']))
                 backgrounds.insert(0, {'type': 'theme', 'href': href, 'value': themeSectionStyle['SectionBackgroundImage']})
-            self.render('sectionConfiguration.html', section=section, params=params, backgrounds=backgrounds, widgetForm=widgetForm, themeWidgetsStyle=themeWidgetsStyle)
+            self.render('sectionConfiguration.html', section=section, params=params, backgrounds=backgrounds, widgetForm=widgetForm, themeWidgetsStyle=themeWidgetsStyle, custom="custom")
         elif action=='addsection':
             self.render('sectionAdd.html')
 

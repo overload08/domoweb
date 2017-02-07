@@ -66,7 +66,11 @@
         {{ error }}
       </div>
     {% end %}
-
+    {% if custom %}
+      <div class="alert alert-info" role="alert">
+        {{ custom }}
+      </div>
+    {% end %}
   <div class="box">
     <form action="/login" method="post" class="form-vertical login-form">
       <div class="form-title">Please enter username and password</div>
@@ -75,7 +79,7 @@
         <label for="name" class="sr-only">Name</label>
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden='true'></span></span>
-          <input type="text" class="form-control" name="name" id="name" placeholder="Your name...">
+          <input type="text" class="form-control" name="name" id="name" value="demo">
         </div>
       </div>
       <div class="form-group">
@@ -113,7 +117,7 @@
       </div>
     </div>
   </div>
-
+  <br />
 
   <script src="/libraries/bootstrap-3.3.5/js/bootstrap.min.js"></script>
   <script type="text/javascript">
